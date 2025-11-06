@@ -4,52 +4,19 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
   color: white;
-  position: relative;
+  padding: 2rem 1rem;
 }
 
-.closeButton {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-}
-
-.closeButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  padding: 2rem;
-}
-
-.waitlistForm {
+.header {
   text-align: center;
-  max-width: 600px;
-  width: 100%;
+  margin-bottom: 2rem;
 }
 
 .title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -58,69 +25,94 @@
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.6;
-  margin-bottom: 3rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 300;
 }
 
-.form {
+.nav {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 1rem;
-  width: 100%;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
-.emailInput {
-  width: 100%;
-  max-width: 400px;
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
+.navButton {
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  color: white;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.emailInput::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.emailInput:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-}
-
-.error {
-  color: #ff6b6b;
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.joinButton {
-  background: #f7d954;
-  color: #000;
-  border: none;
-  padding: 1rem 3rem;
-  font-size: 1rem;
-  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.5rem;
   border-radius: 12px;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
   transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 1rem;
-  box-shadow: 0 4px 20px rgba(247, 217, 84, 0.3);
+  backdrop-filter: blur(10px);
 }
 
-.joinButton:hover {
-  background: #f5d73a;
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(247, 217, 84, 0.4);
+}
+
+.navButtonActive {
+  background: #f7d954;
+  color: #000;
+  border-color: #f7d954;
+}
+
+.navButtonActive:hover {
+  background: #f5d73a;
+  border-color: #f5d73a;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.eventsView,
+.createView {
+  width: 100%;
+}
+
+.createView {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.loading,
+.authRequired {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+}
+
+.authRequired {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .nav {
+    flex-direction: column;
+  }
+
+  .navButton {
+    width: 100%;
+  }
 }
