@@ -3,28 +3,15 @@
 import { useParams } from "next/navigation";
 import { EventProvider, useEvents } from "../../context/EventContext";
 import { EventDetail } from "../../components/EventDetail";
-import { useQuickAuth } from "@coinbase/onchainkit/minikit";
-
-interface AuthResponse {
-  success: boolean;
-  user?: {
-    fid: number;
-    issuedAt?: number;
-    expiresAt?: number;
-  };
-  message?: string;
-}
+import { useFarcasterAuth } from "../../hooks/useFarcasterAuth";
 
 function EventDetailContent() {
   const params = useParams();
   const eventId = params.id as string;
   const { rsvpToEvent, cancelRsvp } = useEvents();
+  const { userData } = useFarcasterAuth();
 
-  const { data: authData } = useQuickAuth<AuthResponse>("/api/auth", {
-    method: "GET",
-  });
-
-  const currentUserFid = authData?.user?.fid;
+  const currentUserFid = userData?.fid;
 
   const handleRsvp = async (eventId: string) => {
     if (!currentUserFid) {

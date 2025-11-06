@@ -1,29 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useQuickAuth, useMiniKit } from "@coinbase/onchainkit/minikit";
+import { useMiniKit } from "@coinbase/onchainkit/minikit";
 import { EventProvider } from "./context/EventContext";
 import { EventList } from "./components/EventList";
 import { CreateEventForm } from "./components/CreateEventForm";
+import { useFarcasterAuth } from "./hooks/useFarcasterAuth";
 import styles from "./page.module.css";
-
-interface AuthResponse {
-  success: boolean;
-  user?: {
-    fid: number;
-    issuedAt?: number;
-    expiresAt?: number;
-  };
-  message?: string;
-}
 
 type View = "events" | "create";
 
 function HomeContent() {
   const { isFrameReady, setFrameReady, context } = useMiniKit();
   const [view, setView] = useState<View>("events");
-
-  const { data: authData, isLoading: isAuthLoading } =
-    useQuickAuth<AuthResponse>("/api/auth", { method: "GET" });
+  const { userData, loading, error, signIn, signOut, isAuthenticated } =
+    useFarcasterAuth();
 
   // Initialize the miniapp
   useEffect(() => {
@@ -32,7 +22,7 @@ function HomeContent() {
     }
   }, [setFrameReady, isFrameReady]);
 
-  const currentUserFid = authData?.user?.fid;
+  const currentUserFid = userData?.fid;
   const currentUserName = context?.user?.displayName;
 
   const handleCreateSuccess = () => {
@@ -42,12 +32,41 @@ function HomeContent() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Event Platform</h1>
-        <p className={styles.subtitle}>
-          {context?.user?.displayName
-            ? `Welcome, ${context.user.displayName}!`
-            : "Discover and create events on Farcaster"}
-        </p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.title}>Event Platform</h1>
+            <p className={styles.subtitle}>
+              {currentUserName
+                ? `Welcome, ${currentUserName}!`
+                : "Discover and create events on Farcaster"}
+            </p>
+          </div>
+          <div className={styles.authSection}>
+            {!isAuthenticated ? (
+              <button
+                onClick={signIn}
+                className={styles.signInButton}
+                disabled={loading}
+              >
+                {loading ? "Signing in..." : "Sign In"}
+              </button>
+            ) : (
+              <div className={styles.authInfo}>
+                <span className={styles.authStatus}>
+                  ✓ FID: {currentUserFid}
+                </span>
+                <button onClick={signOut} className={styles.signOutButton}>
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        {error && (
+          <div className={styles.authError} role="alert">
+            {error}
+          </div>
+        )}
       </header>
 
       <nav className={styles.nav}>
@@ -80,15 +99,28 @@ function HomeContent() {
 
         {view === "create" && (
           <div className={styles.createView}>
-            {isAuthLoading ? (
-              <div className={styles.loading}>Loading...</div>
-            ) : !authData?.success || !currentUserFid ? (
+            {loading ? (
+              <div className={styles.loading}>Authenticating...</div>
+            ) : !isAuthenticated ? (
               <div className={styles.authRequired}>
-                <p>Please authenticate to create events</p>
+                <h3 className={styles.authTitle}>Authentication Required</h3>
+                <p className={styles.authMessage}>
+                  Please sign in to create events using Farcaster Quick Auth.
+                </p>
+                <button
+                  onClick={signIn}
+                  className={styles.authButton}
+                  disabled={loading}
+                >
+                  {loading ? "Signing in..." : "Sign In with Farcaster"}
+                </button>
+                {error && (
+                  <p className={styles.authErrorText}>Error: {error}</p>
+                )}
               </div>
             ) : (
               <CreateEventForm
-                creatorFid={currentUserFid}
+                creatorFid={currentUserFid!}
                 creatorName={currentUserName}
                 onSuccess={handleCreateSuccess}
                 onCancel={() => setView("events")}

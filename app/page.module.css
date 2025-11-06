@@ -8,8 +8,88 @@
 }
 
 .header {
-  text-align: center;
   margin-bottom: 2rem;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.headerTop > div:first-child {
+  flex: 1;
+  text-align: left;
+}
+
+.authSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.authInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.authStatus {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.signInButton,
+.signOutButton {
+  background: #f7d954;
+  color: #000;
+  border: 2px solid #f7d954;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.signInButton:hover:not(:disabled) {
+  background: #f5d73a;
+  border-color: #f5d73a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(247, 217, 84, 0.3);
+}
+
+.signInButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.signOutButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.signOutButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.authError {
+  background: rgba(255, 107, 107, 0.1);
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-align: center;
 }
 
 .title {
@@ -101,11 +181,84 @@
   border-radius: 16px;
   padding: 2rem;
   backdrop-filter: blur(10px);
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.authTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.authMessage {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.authButton {
+  background: #f7d954;
+  color: #000;
+  border: 2px solid #f7d954;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+
+.authButton:hover:not(:disabled) {
+  background: #f5d73a;
+  border-color: #f5d73a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(247, 217, 84, 0.3);
+}
+
+.authButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.authErrorText {
+  color: #ff6b6b;
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
+  }
+
+  .headerTop {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .headerTop > div:first-child {
+    text-align: center;
+  }
+
+  .authSection {
+    justify-content: center;
+  }
+
+  .authInfo {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .signInButton,
+  .signOutButton {
+    width: 100%;
   }
 
   .nav {
