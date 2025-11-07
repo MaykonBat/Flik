@@ -11,7 +11,7 @@ import { WalletSection } from "./components/WalletSection";
 import { IdentitySection } from "./components/IdentitySection";
 import { NavigationTabs } from "./components/NavigationTabs";
 import { useFarcasterAuth } from "./hooks/useFarcasterAuth";
-import sdk from "@farcaster/miniapp-sdk";
+import { sdk } from "@farcaster/miniapp-sdk";
 
 type View = "events" | "create";
 
@@ -26,10 +26,18 @@ export default function HomePage() {
   // Initialize the miniapp
   useEffect(() => {
     const initialize = async () => {
-      if (!isFrameReady) {
-        // Call SDK ready first, then mark frame as ready
-        await sdk.actions.ready();
-        setFrameReady();
+      try {
+        // Always call SDK ready to hide splash screen
+        // This must be called after the app is fully loaded
+        if (sdk?.actions?.ready) {
+          await sdk.actions.ready();
+        }
+        // Mark frame as ready if not already
+        if (!isFrameReady) {
+          setFrameReady();
+        }
+      } catch (error) {
+        console.error("Error initializing miniapp:", error);
       }
     };
     initialize();
