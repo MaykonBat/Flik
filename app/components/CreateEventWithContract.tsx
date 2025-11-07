@@ -6,31 +6,34 @@ import { prepareEventForContract } from "../lib/service/createEvent";
 import { CreateEventInput } from "../types/event";
 import { useAccount } from "wagmi";
 
-interface CreateEventFormProps {
+interface CreateEventWithContractProps {
   creatorFid: number;
   creatorName?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function CreateEventForm({
-  // creatorFid,
-  // creatorName,
+/**
+ * Exemplo de componente que cria eventos diretamente no contrato blockchain
+ *
+ * Para usar este componente:
+ * 1. Atualize o endereço do contrato em app/lib/contracts.ts
+ * 2. Certifique-se de que o usuário está conectado com a carteira
+ * 3. Substitua CreateEvent por CreateEventWithContract em app/page.tsx
+ */
+export function CreateEventWithContract({
+  creatorFid,
+  creatorName,
   onSuccess,
   onCancel,
-}: CreateEventFormProps) {
-  const {
-    createPublicEvent,
-    isPending,
-    isSuccess,
-    error: contractError,
-  } = useEventContract();
+}: CreateEventWithContractProps) {
+  const { createPublicEvent, isPending, isSuccess, error } = useEventContract();
   const { isConnected } = useAccount();
+
   const [formData, setFormData] = useState<CreateEventInput>({
     title: "",
     description: "",
-    startsAt: "",
-    endsAt: "",
+    date: "",
     location: "",
     imageUrl: "",
     category: "",
@@ -44,7 +47,7 @@ export function CreateEventForm({
     e.preventDefault();
     setFormError("");
 
-    // Validation
+    // Validação básica
     if (!isConnected) {
       setFormError("Please connect your wallet first");
       return;
@@ -58,12 +61,8 @@ export function CreateEventForm({
       setFormError("Description is required");
       return;
     }
-    if (!formData.startsAt) {
-      setFormError("Start date is required");
-      return;
-    }
-    if (!formData.endsAt) {
-      setFormError("End date is required");
+    if (!formData.date) {
+      setFormError("Date is required");
       return;
     }
     if (!formData.location.trim()) {
@@ -71,20 +70,12 @@ export function CreateEventForm({
       return;
     }
 
-    // Validate dates
-    // const startsAtDate = new Date(formData.startsAt);
-    // const endsAtDate = new Date(formData.endsAt);
-    // const now = new Date();
-
-    // if (startsAtDate < now) {
-    //   setFormError("Event start date must be in the future");
-    //   return;
-    // }
-
-    // if (endsAtDate <= startsAtDate) {
-    //   setFormError("Event end date must be after start date");
-    //   return;
-    // }
+    // Valida que a data está no futuro
+    const eventDate = new Date(formData.date);
+    if (eventDate < new Date()) {
+      setFormError("Event date must be in the future");
+      return;
+    }
 
     try {
       // Prepara os dados para o contrato
@@ -93,26 +84,31 @@ export function CreateEventForm({
       // Chama o contrato
       await createPublicEvent(contractParams);
 
-      // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        startsAt: "",
-        endsAt: "",
-        location: "",
-        imageUrl: "",
-        category: "",
-        maxAttendees: undefined,
-        price: undefined,
-      });
+      // Reset form se sucesso
+      if (isSuccess) {
+        setFormData({
+          title: "",
+          description: "",
+          date: "",
+          location: "",
+          imageUrl: "",
+          category: "",
+          maxAttendees: undefined,
+          price: undefined,
+        });
 
-      if (onSuccess) {
-        onSuccess();
+        // Opcional: salvar dados adicionais no backend
+        // (imageUrl, price, etc não estão no contrato)
+        await saveAdditionalEventData(formData, creatorFid, creatorName);
+
+        if (onSuccess) {
+          onSuccess();
+        }
       }
     } catch (err) {
       console.error("Error creating event:", err);
       setFormError(
-        contractError?.message || "Failed to create event on blockchain"
+        error?.message || "Failed to create event on blockchain"
       );
     }
   };
@@ -140,7 +136,7 @@ export function CreateEventForm({
       className="bg-white/5 border-2 border-white/10 rounded-2xl p-8 backdrop-blur-[10px] max-w-[800px] w-full mx-auto"
     >
       <h2 className="text-3xl font-bold text-white mb-8 text-center">
-        Create New Event
+        Create New Event (Blockchain)
       </h2>
 
       {!isConnected && (
@@ -152,12 +148,12 @@ export function CreateEventForm({
         </div>
       )}
 
-      {(formError || contractError) && (
+      {(formError || error) && (
         <div
           className="bg-[rgba(255,107,107,0.2)] border-2 border-[rgba(255,107,107,0.3)] text-[#ff6b6b] p-4 rounded-lg mb-6 text-sm"
           role="alert"
         >
-          {formError || contractError?.message}
+          {formError || error?.message}
         </div>
       )}
 
@@ -170,6 +166,7 @@ export function CreateEventForm({
         </div>
       )}
 
+      {/* Campos do formulário - igual ao CreateEventForm.tsx */}
       <div className="flex flex-col gap-2 mb-6">
         <label htmlFor="title" className="text-white/90 font-semibold text-sm">
           Event Title *
@@ -183,7 +180,6 @@ export function CreateEventForm({
           className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           placeholder="Enter event title"
           required
-          aria-required="true"
         />
       </div>
 
@@ -203,71 +199,46 @@ export function CreateEventForm({
           placeholder="Describe your event"
           rows={4}
           required
-          aria-required="true"
-        />
-      </div>
-
-      <div className="flex flex-col gap-2 mb-6">
-        <label
-          htmlFor="location"
-          className="text-white/90 font-semibold text-sm"
-        >
-          Location *
-        </label>
-        <input
-          type="text"
-          id="location"
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-          placeholder="Event location"
-          required
-          aria-required="true"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="flex flex-col gap-2">
-          <label
-            htmlFor="startsAt"
-            className="text-white/90 font-semibold text-sm"
-          >
-            Start Date & Time *
+          <label htmlFor="date" className="text-white/90 font-semibold text-sm">
+            Date & Time *
           </label>
           <input
             type="datetime-local"
-            id="startsAt"
-            name="startsAt"
-            value={formData.startsAt}
+            id="date"
+            name="date"
+            value={formData.date}
             onChange={handleChange}
             className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             required
-            aria-required="true"
           />
         </div>
 
         <div className="flex flex-col gap-2">
           <label
-            htmlFor="endsAt"
+            htmlFor="location"
             className="text-white/90 font-semibold text-sm"
           >
-            End Date & Time *
+            Location *
           </label>
           <input
-            type="datetime-local"
-            id="endsAt"
-            name="endsAt"
-            value={formData.endsAt}
+            type="text"
+            id="location"
+            name="location"
+            value={formData.location}
             onChange={handleChange}
             className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+            placeholder="Event location"
             required
-            aria-required="true"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="flex flex-col gap-2">
           <label
             htmlFor="category"
@@ -312,46 +283,6 @@ export function CreateEventForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-6">
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="imageUrl"
-            className="text-white/90 font-semibold text-sm"
-          >
-            Image URL
-          </label>
-          <input
-            type="url"
-            id="imageUrl"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="price"
-            className="text-white/90 font-semibold text-sm"
-          >
-            Price (USDC)
-          </label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={formData.price || ""}
-            onChange={handleChange}
-            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-            placeholder="Free"
-            min="0"
-            step="0.01"
-          />
-        </div>
-      </div>
-
       <div className="flex gap-4 justify-end mt-8 pt-6 border-t border-white/10 md:flex-row flex-col-reverse">
         {onCancel && (
           <button
@@ -372,4 +303,31 @@ export function CreateEventForm({
       </div>
     </form>
   );
+}
+
+/**
+ * Função auxiliar para salvar dados adicionais no backend
+ * (imageUrl, price, etc não estão no contrato)
+ */
+async function saveAdditionalEventData(
+  eventData: CreateEventInput,
+  creatorFid: number,
+  creatorName?: string
+) {
+  try {
+    await fetch("/api/events/metadata", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...eventData,
+        creatorFid,
+        creatorName,
+      }),
+    });
+  } catch (err) {
+    console.error("Error saving additional event data:", err);
+    // Não falhar a operação principal se isto falhar
+  }
 }

@@ -30,7 +30,7 @@ export function EventList({
   };
 
   const filteredEvents = events.filter((event) => {
-    const eventDate = new Date(event.date);
+    const eventDate = new Date(event.date || "");
     const now = new Date();
 
     if (filter === "upcoming") {
@@ -44,7 +44,9 @@ export function EventList({
   if (loading) {
     return (
       <div className="w-full py-4">
-        <div className="text-center py-12 px-4 text-white/80">Loading events...</div>
+        <div className="text-center py-12 px-4 text-white/80">
+          Loading events...
+        </div>
       </div>
     );
   }
@@ -52,7 +54,9 @@ export function EventList({
   if (error) {
     return (
       <div className="w-full py-4">
-        <div className="text-center py-12 px-4 text-[#ff6b6b]">Error: {error}</div>
+        <div className="text-center py-12 px-4 text-[#ff6b6b]">
+          Error: {error}
+        </div>
       </div>
     );
   }

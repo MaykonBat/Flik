@@ -1,30 +1,33 @@
 "use client";
-import { ReactNode } from "react";
-import { baseSepolia } from "wagmi/chains";
-import { OnchainKitProvider } from "@coinbase/onchainkit";
-import "@coinbase/onchainkit/styles.css";
 
-export function RootProvider({ children }: { children: ReactNode }) {
+import { OnchainKitProvider } from "@coinbase/onchainkit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { baseSepolia } from "viem/chains";
+import { type ReactNode, useState } from "react";
+import { type State, WagmiProvider } from "wagmi";
+import { getConfig } from "./lib/wagmi";
+
+export function Providers(props: {
+  children: ReactNode;
+  initialState?: State;
+}) {
+  const [config] = useState(() => getConfig());
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
-    <OnchainKitProvider
-      apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-      chain={baseSepolia}
-      config={{
-        appearance: {
-          mode: "auto",
-        },
-        wallet: {
-          display: "modal",
-          preference: "all",
-        },
-      }}
-      miniKit={{
-        enabled: true,
-        autoConnect: true,
-        notificationProxyUrl: undefined,
-      }}
-    >
-      {children}
-    </OnchainKitProvider>
+    <WagmiProvider config={config} initialState={props.initialState}>
+      <QueryClientProvider client={queryClient}>
+        <OnchainKitProvider
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
+          chain={baseSepolia}
+          miniKit={{
+            enabled: true,
+            autoConnect: true,
+          }}
+        >
+          {props.children}
+        </OnchainKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
