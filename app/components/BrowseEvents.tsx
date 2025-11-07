@@ -1,12 +1,13 @@
 "use client";
 
 import { useGetAllEvents } from "../hooks/useGetAllEvents";
+import Link from "next/link";
 
 interface BrowseEventsProps {
   currentUserFid: number | undefined;
 }
 
-export function BrowseEvents({ currentUserFid }: BrowseEventsProps) {
+export function BrowseEvents({}: BrowseEventsProps) {
   const { events, isLoading, isError } = useGetAllEvents();
 
   if (isLoading) {
@@ -46,9 +47,10 @@ export function BrowseEvents({ currentUserFid }: BrowseEventsProps) {
     <div className="w-full py-4">
       <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4 md:gap-6 w-full">
         {events.map((event) => (
-          <div
+          <Link
             key={event.id.toString()}
-            className="bg-white/5 backdrop-blur-lg rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all"
+            href={`/${event.eventAddress}`}
+            className="bg-white/5 backdrop-blur-lg rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all cursor-pointer hover:scale-[1.02] duration-200"
           >
             <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
             <p className="text-white/70 text-sm mb-3">
@@ -67,7 +69,7 @@ export function BrowseEvents({ currentUserFid }: BrowseEventsProps) {
             <p className="text-white/50 text-xs">
               Created: {new Date(Number(event.timestamp) * 1000).toLocaleDateString()}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
