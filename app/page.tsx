@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useMiniKit, useAddFrame } from "@coinbase/onchainkit/minikit";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import { BrowseEvents } from "./components/BrowseEvents";
 import { CreateEvent } from "./components/CreateEvent";
 import { Header } from "./components/Header";
 import { AddFrameButton } from "./components/AddFrameButton";
 import { WalletSection } from "./components/WalletSection";
-import { IdentitySection } from "./components/IdentitySection";
+// import { IdentitySection } from "./components/IdentitySection";
 import { NavigationTabs } from "./components/NavigationTabs";
 import { useFarcasterAuth } from "./hooks/useFarcasterAuth";
 import { sdk } from "@farcaster/miniapp-sdk";
@@ -17,7 +17,7 @@ type View = "events" | "create";
 
 export default function HomePage() {
   const { isFrameReady, setFrameReady, context } = useMiniKit();
-  const { address, isConnected } = useAccount();
+  // const { address, isConnected } = useAccount();
   const addFrame = useAddFrame();
   const [view, setView] = useState<View>("events");
   const [frameAdded, setFrameAdded] = useState(false);
@@ -73,7 +73,7 @@ export default function HomePage() {
 
       <WalletSection />
 
-      {isConnected && <IdentitySection address={address} />}
+      {/* {isConnected && <IdentitySection address={address} />} */}
 
       <NavigationTabs currentView={view} onViewChange={setView} />
 
