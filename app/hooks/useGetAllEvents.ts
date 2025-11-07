@@ -1,7 +1,7 @@
 "use client";
 
 import { useReadContract, useAccount } from "wagmi";
-import { eventFactoryABI } from "../lib/abi";
+import { EVENT_FACTORY_ABI } from "../lib/abi";
 import { getContractAddress } from "../lib/contracts";
 
 export interface EventInfo {
@@ -21,14 +21,9 @@ export function useGetAllEvents() {
     "EVENT_HUB"
   );
 
-  const {
-    data,
-    isError,
-    isLoading,
-    refetch,
-  } = useReadContract({
+  const { data, isError, isLoading, refetch } = useReadContract({
     address: contractAddress,
-    abi: eventFactoryABI,
+    abi: EVENT_FACTORY_ABI,
     functionName: "getAllEvents",
   });
 

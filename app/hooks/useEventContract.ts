@@ -1,7 +1,7 @@
 "use client";
 
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { eventABI } from "../lib/abi";
+import { EVENT_HUB_ABI } from "../lib/abi";
 import { getContractAddress } from "../lib/contracts";
 import { useAccount } from "wagmi";
 import { useState } from "react";
@@ -41,7 +41,7 @@ export function useEventContract() {
       console.log(" params", params);
       writeContract({
         address: contractAddress,
-        abi: eventABI,
+        abi: EVENT_HUB_ABI,
         functionName: "createPublicEvent",
         args: [
           params.title,

@@ -1,4 +1,4 @@
-export const eventABI = [
+export const EVENT_HUB_ABI = [
   {
     inputs: [
       {
@@ -170,7 +170,7 @@ export const eventABI = [
   },
 ];
 
-export const eventFactoryABI = [
+export const EVENT_FACTORY_ABI = [
   {
     anonymous: false,
     inputs: [
