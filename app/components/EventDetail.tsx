@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Event } from "../types/event";
-import styles from "./EventDetail.module.css";
 
 interface EventDetailProps {
   eventId: string;
@@ -64,17 +63,20 @@ export function EventDetail({
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading event...</div>
+      <div className="w-full max-w-[900px] mx-auto py-8 px-4">
+        <div className="text-center py-12 px-4 text-white/80 text-lg">Loading event...</div>
       </div>
     );
   }
 
   if (error || !event) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>{error || "Event not found"}</div>
-        <button onClick={() => router.back()} className={styles.backButton}>
+      <div className="w-full max-w-[900px] mx-auto py-8 px-4">
+        <div className="text-center py-12 px-4 text-[#ff6b6b] text-lg">{error || "Event not found"}</div>
+        <button 
+          onClick={() => router.back()} 
+          className="bg-white/10 border-2 border-white/20 text-white px-6 py-3 rounded-lg cursor-pointer text-base font-semibold mb-8 transition-all duration-300 backdrop-blur-[10px] hover:bg-white/15 hover:border-white/30 hover:-translate-x-1"
+        >
           Go Back
         </button>
       </div>
@@ -103,67 +105,70 @@ export function EventDetail({
   };
 
   return (
-    <div className={styles.container}>
-      <button onClick={() => router.back()} className={styles.backButton}>
+    <div className="w-full max-w-[900px] mx-auto py-8 px-4 md:px-4">
+      <button 
+        onClick={() => router.back()} 
+        className="bg-white/10 border-2 border-white/20 text-white px-6 py-3 rounded-lg cursor-pointer text-base font-semibold mb-8 transition-all duration-300 backdrop-blur-[10px] hover:bg-white/15 hover:border-white/30 hover:-translate-x-1"
+      >
         ← Back
       </button>
 
       {event.imageUrl && (
-        <div className={styles.imageContainer}>
+        <div className="w-full h-[400px] md:h-[400px] rounded-2xl overflow-hidden mb-8 bg-white/5">
           <img
             src={event.imageUrl}
             alt={event.title}
-            className={styles.image}
+            className="w-full h-full object-cover"
           />
         </div>
       )}
 
-      <article className={styles.content}>
-        <header className={styles.header}>
-          <div className={styles.headerTop}>
-            <h1 className={styles.title}>{event.title}</h1>
+      <article className="bg-white/5 border-2 border-white/10 rounded-2xl p-8 md:p-8 backdrop-blur-[10px]">
+        <header className="mb-8">
+          <div className="flex justify-between items-start gap-4 mb-4">
+            <h1 className="text-4xl md:text-[2.5rem] font-bold text-white m-0 leading-tight flex-1">{event.title}</h1>
             {event.category && (
-              <span className={styles.category}>{event.category}</span>
+              <span className="bg-[rgba(247,217,84,0.2)] text-[#f7d954] px-4 py-2 rounded-xl text-sm font-semibold uppercase whitespace-nowrap self-start">{event.category}</span>
             )}
           </div>
           {event.creatorName && (
-            <p className={styles.creator}>
-              Created by <strong>{event.creatorName}</strong>
+            <p className="text-white/70 text-base m-0">
+              Created by <strong className="text-white font-semibold">{event.creatorName}</strong>
             </p>
           )}
         </header>
 
-        <div className={styles.meta}>
-          <div className={styles.metaItem}>
-            <span className={styles.metaIcon}>📅</span>
-            <div>
-              <span className={styles.metaLabel}>Date & Time</span>
-              <span className={styles.metaValue}>{formatDate(eventDate)}</span>
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 mb-8 p-6 bg-white/3 rounded-xl">
+          <div className="flex items-start gap-4">
+            <span className="text-2xl flex-shrink-0">📅</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-white/60 text-xs uppercase tracking-wider font-semibold">Date & Time</span>
+              <span className="text-white text-base font-medium">{formatDate(eventDate)}</span>
             </div>
           </div>
-          <div className={styles.metaItem}>
-            <span className={styles.metaIcon}>📍</span>
-            <div>
-              <span className={styles.metaLabel}>Location</span>
-              <span className={styles.metaValue}>{event.location}</span>
+          <div className="flex items-start gap-4">
+            <span className="text-2xl flex-shrink-0">📍</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-white/60 text-xs uppercase tracking-wider font-semibold">Location</span>
+              <span className="text-white text-base font-medium">{event.location}</span>
             </div>
           </div>
-          <div className={styles.metaItem}>
-            <span className={styles.metaIcon}>👥</span>
-            <div>
-              <span className={styles.metaLabel}>Attendees</span>
-              <span className={styles.metaValue}>
+          <div className="flex items-start gap-4">
+            <span className="text-2xl flex-shrink-0">👥</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-white/60 text-xs uppercase tracking-wider font-semibold">Attendees</span>
+              <span className="text-white text-base font-medium">
                 {event.attendees.length}
                 {event.maxAttendees && ` / ${event.maxAttendees}`}
               </span>
             </div>
           </div>
           {event.price !== undefined && (
-            <div className={styles.metaItem}>
-              <span className={styles.metaIcon}>💰</span>
-              <div>
-                <span className={styles.metaLabel}>Price</span>
-                <span className={styles.metaValue}>
+            <div className="flex items-start gap-4">
+              <span className="text-2xl flex-shrink-0">💰</span>
+              <div className="flex flex-col gap-1">
+                <span className="text-white/60 text-xs uppercase tracking-wider font-semibold">Price</span>
+                <span className="text-white text-base font-medium">
                   {event.price === 0 ? "Free" : `${event.price} USDC`}
                 </span>
               </div>
@@ -171,18 +176,20 @@ export function EventDetail({
           )}
         </div>
 
-        <div className={styles.description}>
-          <h2 className={styles.sectionTitle}>About</h2>
-          <p>{event.description}</p>
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4">About</h2>
+          <p className="text-white/80 text-lg leading-relaxed m-0">{event.description}</p>
         </div>
 
         {!isPastEvent && (
-          <div className={styles.actions}>
+          <div className="mt-8 pt-8 border-t border-white/10">
             <button
-              className={`${styles.rsvpButton} ${
-                isUserAttending ? styles.rsvpButtonActive : ""
-              } ${
-                !canRsvp && !isUserAttending ? styles.rsvpButtonDisabled : ""
+              className={`w-full py-4 px-8 rounded-xl font-bold text-lg cursor-pointer transition-all duration-300 uppercase tracking-wide ${
+                isUserAttending
+                  ? "bg-[#f7d954] text-black border-2 border-[#f7d954] hover:bg-[#f5d73a] hover:border-[#f5d73a] hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(247,217,84,0.3)]"
+                  : !canRsvp && !isUserAttending
+                  ? "opacity-50 cursor-not-allowed bg-[rgba(247,217,84,0.2)] text-[#f7d954] border-2 border-[rgba(247,217,84,0.3)]"
+                  : "bg-[rgba(247,217,84,0.2)] text-[#f7d954] border-2 border-[rgba(247,217,84,0.3)] hover:bg-[rgba(247,217,84,0.3)] hover:border-[rgba(247,217,84,0.5)] hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(247,217,84,0.3)]"
               }`}
               onClick={isUserAttending ? handleCancelRsvp : handleRsvp}
               disabled={!canRsvp && !isUserAttending}
@@ -198,8 +205,8 @@ export function EventDetail({
         )}
 
         {isPastEvent && (
-          <div className={styles.pastEvent}>
-            <p>This event has already passed.</p>
+          <div className="mt-8 p-6 bg-[rgba(255,107,107,0.1)] border-2 border-[rgba(255,107,107,0.2)] rounded-xl text-center text-white/80">
+            <p className="m-0">This event has already passed.</p>
           </div>
         )}
       </article>

@@ -3,7 +3,6 @@
 import { useState, FormEvent } from "react";
 import { useEvents } from "../context/EventContext";
 import { CreateEventInput } from "../types/event";
-import styles from "./CreateEventForm.module.css";
 
 interface CreateEventFormProps {
   creatorFid: number;
@@ -89,17 +88,17 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h2 className={styles.title}>Create New Event</h2>
+    <form onSubmit={handleSubmit} className="bg-white/5 border-2 border-white/10 rounded-2xl p-8 backdrop-blur-[10px] max-w-[800px] w-full mx-auto">
+      <h2 className="text-3xl font-bold text-white mb-8 text-center">Create New Event</h2>
 
       {(formError || error) && (
-        <div className={styles.error} role="alert">
+        <div className="bg-[rgba(255,107,107,0.2)] border-2 border-[rgba(255,107,107,0.3)] text-[#ff6b6b] p-4 rounded-lg mb-6 text-sm" role="alert">
           {formError || error}
         </div>
       )}
 
-      <div className={styles.field}>
-        <label htmlFor="title" className={styles.label}>
+      <div className="flex flex-col gap-2 mb-6">
+        <label htmlFor="title" className="text-white/90 font-semibold text-sm">
           Event Title *
         </label>
         <input
@@ -108,15 +107,15 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className={styles.input}
+          className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           placeholder="Enter event title"
           required
           aria-required="true"
         />
       </div>
 
-      <div className={styles.field}>
-        <label htmlFor="description" className={styles.label}>
+      <div className="flex flex-col gap-2 mb-6">
+        <label htmlFor="description" className="text-white/90 font-semibold text-sm">
           Description *
         </label>
         <textarea
@@ -124,7 +123,7 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className={styles.textarea}
+          className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)] resize-y min-h-[100px]"
           placeholder="Describe your event"
           rows={4}
           required
@@ -132,9 +131,9 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
         />
       </div>
 
-      <div className={styles.row}>
-        <div className={styles.field}>
-          <label htmlFor="date" className={styles.label}>
+      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-6">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="date" className="text-white/90 font-semibold text-sm">
             Date & Time *
           </label>
           <input
@@ -143,14 +142,14 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className={styles.input}
+            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             required
             aria-required="true"
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="location" className={styles.label}>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="location" className="text-white/90 font-semibold text-sm">
             Location *
           </label>
           <input
@@ -159,7 +158,7 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className={styles.input}
+            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             placeholder="Event location"
             required
             aria-required="true"
@@ -167,9 +166,9 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
         </div>
       </div>
 
-      <div className={styles.row}>
-        <div className={styles.field}>
-          <label htmlFor="category" className={styles.label}>
+      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-6">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="category" className="text-white/90 font-semibold text-sm">
             Category
           </label>
           <select
@@ -177,7 +176,7 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className={styles.select}
+            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)] cursor-pointer [&>option]:bg-[#1a1a2e] [&>option]:text-white"
           >
             <option value="">Select category</option>
             <option value="tech">Tech</option>
@@ -189,8 +188,8 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
           </select>
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="maxAttendees" className={styles.label}>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="maxAttendees" className="text-white/90 font-semibold text-sm">
             Max Attendees
           </label>
           <input
@@ -199,16 +198,16 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
             name="maxAttendees"
             value={formData.maxAttendees || ""}
             onChange={handleChange}
-            className={styles.input}
+            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             placeholder="Unlimited"
             min="1"
           />
         </div>
       </div>
 
-      <div className={styles.row}>
-        <div className={styles.field}>
-          <label htmlFor="imageUrl" className={styles.label}>
+      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-6">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="imageUrl" className="text-white/90 font-semibold text-sm">
             Image URL
           </label>
           <input
@@ -217,13 +216,13 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
             name="imageUrl"
             value={formData.imageUrl}
             onChange={handleChange}
-            className={styles.input}
+            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             placeholder="https://example.com/image.jpg"
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="price" className={styles.label}>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="price" className="text-white/90 font-semibold text-sm">
             Price (USDC)
           </label>
           <input
@@ -232,7 +231,7 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
             name="price"
             value={formData.price || ""}
             onChange={handleChange}
-            className={styles.input}
+            className="w-full px-4 py-3 text-base bg-white/10 border-2 border-white/20 rounded-lg text-white backdrop-blur-[10px] transition-all duration-300 font-inherit placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/15 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             placeholder="Free"
             min="0"
             step="0.01"
@@ -240,13 +239,21 @@ export function CreateEventForm({ creatorFid, creatorName, onSuccess, onCancel }
         </div>
       </div>
 
-      <div className={styles.actions}>
+      <div className="flex gap-4 justify-end mt-8 pt-6 border-t border-white/10 md:flex-row flex-col-reverse">
         {onCancel && (
-          <button type="button" onClick={onCancel} className={styles.cancelButton}>
+          <button 
+            type="button" 
+            onClick={onCancel} 
+            className="px-8 py-3 text-base font-semibold rounded-lg cursor-pointer transition-all duration-300 border-2 border-transparent bg-white/10 text-white/80 border-white/20 hover:bg-white/15 hover:border-white/30 w-full md:w-auto"
+          >
             Cancel
           </button>
         )}
-        <button type="submit" className={styles.submitButton} disabled={loading}>
+        <button 
+          type="submit" 
+          className="px-8 py-3 text-base font-semibold rounded-lg cursor-pointer transition-all duration-300 border-2 border-transparent bg-[#f7d954] text-black border-[#f7d954] hover:bg-[#f5d73a] hover:border-[#f5d73a] hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(247,217,84,0.3)] disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto" 
+          disabled={loading}
+        >
           {loading ? "Creating..." : "Create Event"}
         </button>
       </div>
