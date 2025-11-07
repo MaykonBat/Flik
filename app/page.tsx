@@ -25,21 +25,27 @@ export default function HomePage() {
 
   // Initialize the miniapp
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === "undefined") return;
+
     const initialize = async () => {
       try {
         // Always call SDK ready to hide splash screen
         // This must be called after the app is fully loaded
-        if (sdk?.actions?.ready) {
-          await sdk.actions.ready();
-        }
-        // Mark frame as ready if not already
-        if (!isFrameReady) {
-          setFrameReady();
-        }
+        // According to Farcaster docs: https://miniapps.farcaster.xyz/docs/getting-started#making-your-app-display
+        await sdk.actions.ready();
+        console.log("✅ SDK ready() called successfully");
       } catch (error) {
-        console.error("Error initializing miniapp:", error);
+        console.error("❌ Error calling sdk.actions.ready():", error);
+        // Continue even if ready() fails
+      }
+
+      // Mark frame as ready if not already
+      if (!isFrameReady) {
+        setFrameReady();
       }
     };
+
     initialize();
   }, [setFrameReady, isFrameReady]);
 
