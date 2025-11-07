@@ -27,8 +27,9 @@ export default function HomePage() {
   useEffect(() => {
     const initialize = async () => {
       if (!isFrameReady) {
-        setFrameReady();
+        // Call SDK ready first, then mark frame as ready
         await sdk.actions.ready();
+        setFrameReady();
       }
     };
     initialize();
