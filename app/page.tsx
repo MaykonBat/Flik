@@ -11,6 +11,7 @@ import { WalletSection } from "./components/WalletSection";
 import { IdentitySection } from "./components/IdentitySection";
 import { NavigationTabs } from "./components/NavigationTabs";
 import { useFarcasterAuth } from "./hooks/useFarcasterAuth";
+import sdk from "@farcaster/miniapp-sdk";
 
 type View = "events" | "create";
 
@@ -24,9 +25,13 @@ export default function HomePage() {
 
   // Initialize the miniapp
   useEffect(() => {
-    if (!isFrameReady) {
-      setFrameReady();
-    }
+    const initialize = async () => {
+      if (!isFrameReady) {
+        setFrameReady();
+        await sdk.actions.ready();
+      }
+    };
+    initialize();
   }, [setFrameReady, isFrameReady]);
 
   const currentUserFid = userData?.fid;
