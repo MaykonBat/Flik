@@ -1,0 +1,238 @@
+{
+	"compiler": {
+		"version": "0.8.24+commit.e11b9ed9"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_hubAddress",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldHub",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newHub",
+						"type": "address"
+					}
+				],
+				"name": "HubContractUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "eventAddress",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					}
+				],
+				"name": "PublicEventCreated",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_location",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxAttendees",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					},
+					{
+						"internalType": "string[]",
+						"name": "_tags",
+						"type": "string[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_startsAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_endsAt",
+						"type": "uint256"
+					}
+				],
+				"name": "createPublicEvent",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_newHub",
+						"type": "address"
+					}
+				],
+				"name": "editHubContract",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "hub",
+				"outputs": [
+					{
+						"internalType": "contract EventHub",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"editHubContract(address)": {
+					"notice": "Changes the hub contract address"
+				},
+				"transferOwnership(address)": {
+					"notice": "Transfers ownership to another address"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/FlintPublicEventFactory.sol": "PublicEventFactory"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/FlintEventHub.sol": {
+			"keccak256": "0x43b829a79a029bbe455faa18d2b92e58c701edaeb2db7a05ddf6005e36cd1c9e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2cddff1b83e47ac4a799aaaa32ba1a08c7914d462f1bdc01a5842a051e5872bc",
+				"dweb:/ipfs/QmRPUEpKvGPj8aKcZoTeTvXuny13Cei6rqo9M4Z7XHwB9V"
+			]
+		},
+		"contracts/FlintPublicEvent.sol": {
+			"keccak256": "0x88689c420290fdaf2045b4dcdb2aa3d24c119d7c42f3bcc5b15c973379a62224",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7589703c4b5030d49fadc44e1179fe892ffb690a781cc606b05c596f6c1a1de2",
+				"dweb:/ipfs/QmZDNnqwnHnm1GhDPmH33xc8inFQDMKHbMjDuiZBvcjU8m"
+			]
+		},
+		"contracts/FlintPublicEventFactory.sol": {
+			"keccak256": "0x056b198ca751cab3dda70627d67242e1de0eacae6df60efc2261429c7869c8e8",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://95c470e86650321d622e81d91877af161de3d9ff38142469f3ddf1dce5fc70f4",
+				"dweb:/ipfs/QmNw9XpmYK8no4Vxmgz5sYLePReWpehCu9dQi3XqKUdtTp"
+			]
+		}
+	},
+	"version": 1
+}

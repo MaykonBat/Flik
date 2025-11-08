@@ -1,0 +1,172 @@
+{
+	"compiler": {
+		"version": "0.8.24+commit.e11b9ed9"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "decimals_",
+						"type": "uint8"
+					},
+					{
+						"internalType": "int256",
+						"name": "initialPrice",
+						"type": "int256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "decimals",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "description",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLatestPrice",
+				"outputs": [
+					{
+						"internalType": "int256",
+						"name": "",
+						"type": "int256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "latestRoundData",
+				"outputs": [
+					{
+						"internalType": "uint80",
+						"name": "roundId",
+						"type": "uint80"
+					},
+					{
+						"internalType": "int256",
+						"name": "answer",
+						"type": "int256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "startedAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "updatedAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint80",
+						"name": "answeredInRound",
+						"type": "uint80"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "int256",
+						"name": "newPrice",
+						"type": "int256"
+					}
+				],
+				"name": "updateAnswer",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"updateAnswer(int256)": {
+					"params": {
+						"newPrice": "The new ETH/USD price (e.g., 2000 * 1e8)"
+					}
+				}
+			},
+			"title": "Mock Chainlink Price Feed",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"decimals()": {
+					"notice": "Returns the number of decimals used in the price feed"
+				},
+				"description()": {
+					"notice": "Returns a dummy description"
+				},
+				"getLatestPrice()": {
+					"notice": "Read the current stored price"
+				},
+				"latestRoundData()": {
+					"notice": "Returns the latest round data, same format as Chainlink"
+				},
+				"updateAnswer(int256)": {
+					"notice": "Manually set the mock price"
+				}
+			},
+			"notice": "Simulates Chainlink's AggregatorV3Interface for testing",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"side_contracts/MockV3Aggregator.sol": "MockV3Aggregator"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": [],
+		"viaIR": true
+	},
+	"sources": {
+		"side_contracts/MockV3Aggregator.sol": {
+			"keccak256": "0x2a3818b034b4375ad5c9ac1a9ea1b57cfdce816bf46fb1896111ac68a34f623d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8d41d98ce623fd53e6b07c6bc63f8a828deda8ea9a93974316772933ec513cab",
+				"dweb:/ipfs/QmV9pcY9dnGUVp9MsLf9VJKzsg8zmRArpuMEmQa7EfuUqR"
+			]
+		}
+	},
+	"version": 1
+}
