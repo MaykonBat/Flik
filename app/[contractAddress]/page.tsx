@@ -1,25 +1,15 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { EVENT_ABI } from "../lib/abi";
+import { useEffect, use } from "react";
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
+import { EVENT_ABI, PAID_EVENT_ABI } from "../lib/abi";
 import Link from "next/link";
-
-interface EventDetails {
-  title: string;
-  description: string;
-  location: string;
-  maxAttendees: bigint;
-  attendeesCount: bigint;
-  startsAt: bigint;
-  endsAt: bigint;
-  tags: string[];
-  owner: string;
-  eventCanceled: boolean;
-  eventEnded: boolean;
-  isUserAttendee: boolean;
-  isUserStaff: boolean;
-}
+import { formatEther } from "viem";
+import { useEventDetails } from "../hooks/useEventDetails";
 
 export default function EventPageDetails({
   params,
@@ -28,178 +18,82 @@ export default function EventPageDetails({
 }) {
   const { contractAddress } = use(params);
   const { address, isConnected } = useAccount();
-  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { writeContract, data: hash, isPending: isWritePending } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
-  });
+  const {
+    writeContract,
+    data: hash,
+    isPending: isWritePending,
+  } = useWriteContract();
 
-  // Read all event details
-  const { data: title } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "title",
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
-  const { data: description } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "description",
-  });
+  // Use multicall hook for all contract reads - MUCH FASTER!
+  const { eventDetails, isLoading, refetch } = useEventDetails(
+    contractAddress,
+    address
+  );
 
-  const { data: location } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "location",
-  });
-
-  const { data: maxAttendees } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "maxAttendees",
-  });
-
-  const { data: attendeesCount, refetch: refetchAttendeesCount } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "attendeesCount",
-  });
-
-  const { data: startsAt } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "startsAt",
-  });
-
-  const { data: endsAt } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "endsAt",
-  });
-
-  const { data: tags } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "getTags",
-  });
-
-  const { data: owner } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "owner",
-  });
-
-  const { data: eventCanceled } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "eventCanceled",
-  });
-
-  const { data: eventEnded } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "eventEnded",
-  });
-
-  const { data: isUserAttendee, refetch: refetchIsAttendee } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "isAttendee",
-    args: address ? [address] : undefined,
-  });
-
-  const { data: isUserStaff } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: EVENT_ABI,
-    functionName: "isStaff",
-    args: address ? [address] : undefined,
-  });
-
-  // Combine all data into eventDetails
-  useEffect(() => {
-    if (
-      title !== undefined &&
-      description !== undefined &&
-      location !== undefined &&
-      maxAttendees !== undefined &&
-      attendeesCount !== undefined &&
-      startsAt !== undefined &&
-      endsAt !== undefined &&
-      tags !== undefined &&
-      owner !== undefined &&
-      eventCanceled !== undefined &&
-      eventEnded !== undefined
-    ) {
-      setEventDetails({
-        title: title as string,
-        description: description as string,
-        location: location as string,
-        maxAttendees: maxAttendees as bigint,
-        attendeesCount: attendeesCount as bigint,
-        startsAt: startsAt as bigint,
-        endsAt: endsAt as bigint,
-        tags: tags as string[],
-        owner: owner as string,
-        eventCanceled: eventCanceled as boolean,
-        eventEnded: eventEnded as boolean,
-        isUserAttendee: (isUserAttendee as boolean) || false,
-        isUserStaff: (isUserStaff as boolean) || false,
-      });
-      setIsLoading(false);
-    }
-  }, [
-    title,
-    description,
-    location,
-    maxAttendees,
-    attendeesCount,
-    startsAt,
-    endsAt,
-    tags,
-    owner,
-    eventCanceled,
-    eventEnded,
-    isUserAttendee,
-    isUserStaff,
-  ]);
-
-  // Refetch attendee status after transaction is confirmed
+  // Refetch after transaction confirmation
   useEffect(() => {
     if (isConfirmed) {
-      refetchIsAttendee();
-      refetchAttendeesCount();
+      refetch();
     }
-  }, [isConfirmed, refetchIsAttendee, refetchAttendeesCount]);
+  }, [isConfirmed, refetch]);
 
   const handleJoinEvent = () => {
-    writeContract({
-      address: contractAddress as `0x${string}`,
-      abi: EVENT_ABI,
-      functionName: "joinEvent",
-    });
+    if (!eventDetails) return;
+
+    // Use different function based on whether event is paid or free
+    if (eventDetails.isPaidEvent) {
+      // Paid event - use joinWithETH from PAID_EVENT_ABI
+      writeContract({
+        address: contractAddress as `0x${string}`,
+        abi: PAID_EVENT_ABI,
+        functionName: "joinWithETH",
+      });
+    } else {
+      // Free event - use joinEvent from EVENT_ABI
+      writeContract({
+        address: contractAddress as `0x${string}`,
+        abi: EVENT_ABI,
+        functionName: "joinEvent",
+      });
+    }
   };
 
   const handleLeaveEvent = () => {
-    writeContract({
-      address: contractAddress as `0x${string}`,
-      abi: EVENT_ABI,
-      functionName: "leaveEvent",
-    });
+    if (!eventDetails) return;
+
+    // Only free events can be left - paid events don't have refund mechanism
+    if (!eventDetails.isPaidEvent) {
+      writeContract({
+        address: contractAddress as `0x${string}`,
+        abi: EVENT_ABI,
+        functionName: "leaveEvent",
+      });
+    }
   };
 
   const handleCancelEvent = () => {
+    if (!eventDetails) return;
+
+    const abi = eventDetails.isPaidEvent ? PAID_EVENT_ABI : EVENT_ABI;
     writeContract({
       address: contractAddress as `0x${string}`,
-      abi: EVENT_ABI,
+      abi,
       functionName: "cancelEvent",
     });
   };
 
   const handleEndEvent = () => {
+    if (!eventDetails) return;
+
+    const abi = eventDetails.isPaidEvent ? PAID_EVENT_ABI : EVENT_ABI;
     writeContract({
       address: contractAddress as `0x${string}`,
-      abi: EVENT_ABI,
+      abi,
       functionName: "endEvent",
     });
   };
@@ -208,7 +102,10 @@ export default function EventPageDetails({
     return new Date(Number(timestamp) * 1000).toLocaleString();
   };
 
-  const isOwner = address && eventDetails?.owner && address.toLowerCase() === eventDetails.owner.toLowerCase();
+  const isOwner =
+    address &&
+    eventDetails?.owner &&
+    address.toLowerCase() === eventDetails.owner.toLowerCase();
 
   if (isLoading) {
     return (
@@ -383,6 +280,33 @@ export default function EventPageDetails({
               </div>
             </div>
 
+            {/* Price - Only show for paid events */}
+            {eventDetails.price !== undefined && (
+              <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                <div className="flex items-start">
+                  <svg
+                    className="size-5 mr-3 mt-1 text-white/70"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div>
+                    <p className="text-white/50 text-sm mb-1">Ticket Price</p>
+                    <p className="text-white font-semibold">
+                      ${Number(formatEther(eventDetails.price)) / 1e18} USD
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Contract Address */}
             <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
               <div className="flex items-start">
@@ -427,48 +351,71 @@ export default function EventPageDetails({
           )}
 
           {/* Action Buttons */}
-          {isConnected && !eventDetails.eventCanceled && !eventDetails.eventEnded && (
-            <div className="flex flex-wrap gap-4 pt-6 border-t border-white/10">
-              {/* Join/Leave Event Buttons for regular users */}
-              {!eventDetails.isUserAttendee ? (
-                <button
-                  onClick={handleJoinEvent}
-                  disabled={isWritePending || isConfirming}
-                  className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isWritePending || isConfirming ? "Processing..." : "Join Event"}
-                </button>
-              ) : (
-                <button
-                  onClick={handleLeaveEvent}
-                  disabled={isWritePending || isConfirming}
-                  className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isWritePending || isConfirming ? "Processing..." : "Leave Event"}
-                </button>
-              )}
+          {isConnected &&
+            !eventDetails.eventCanceled &&
+            !eventDetails.eventEnded && (
+              <div className="flex flex-wrap gap-4 pt-6 border-t border-white/10">
+                {/* Join/Leave Event Buttons for regular users */}
+                {!eventDetails.isUserAttendee ? (
+                  <button
+                    onClick={handleJoinEvent}
+                    disabled={isWritePending || isConfirming}
+                    className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isWritePending || isConfirming
+                      ? "Processing..."
+                      : eventDetails.price !== undefined
+                      ? `Buy Ticket - $${
+                          Number(formatEther(eventDetails.price)) / 1e18
+                        } USD`
+                      : "Join Event (Free)"}
+                  </button>
+                ) : (
+                  <>
+                    {eventDetails.price === undefined && (
+                      <button
+                        onClick={handleLeaveEvent}
+                        disabled={isWritePending || isConfirming}
+                        className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isWritePending || isConfirming
+                          ? "Processing..."
+                          : "Leave Event"}
+                      </button>
+                    )}
+                    {eventDetails.price !== undefined && (
+                      <div className="px-6 py-3 bg-green-500/20 border-2 border-green-500/50 text-green-400 rounded-xl font-semibold">
+                        ✓ Ticket Purchased
+                      </div>
+                    )}
+                  </>
+                )}
 
-              {/* Owner Actions */}
-              {isOwner && (
-                <>
-                  <button
-                    onClick={handleEndEvent}
-                    disabled={isWritePending || isConfirming}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isWritePending || isConfirming ? "Processing..." : "End Event"}
-                  </button>
-                  <button
-                    onClick={handleCancelEvent}
-                    disabled={isWritePending || isConfirming}
-                    className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isWritePending || isConfirming ? "Processing..." : "Cancel Event"}
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+                {/* Owner Actions */}
+                {isOwner && (
+                  <>
+                    <button
+                      onClick={handleEndEvent}
+                      disabled={isWritePending || isConfirming}
+                      className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isWritePending || isConfirming
+                        ? "Processing..."
+                        : "End Event"}
+                    </button>
+                    <button
+                      onClick={handleCancelEvent}
+                      disabled={isWritePending || isConfirming}
+                      className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isWritePending || isConfirming
+                        ? "Processing..."
+                        : "Cancel Event"}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
 
           {/* Transaction Status */}
           {hash && (

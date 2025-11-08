@@ -5,6 +5,8 @@ import { useEventContract } from "../hooks/useEventContract";
 import { prepareEventForContract } from "../lib/service/createEvent";
 import { CreateEventInput } from "../types/event";
 import { useAccount } from "wagmi";
+import { preparePaidEventForContract } from "../lib/service/createPaidEvent";
+import { usePaidEventContract } from "../hooks/usePaidEventContract";
 
 interface CreateEventFormProps {
   creatorFid: number;
@@ -21,11 +23,24 @@ export function CreateEventForm({
 }: CreateEventFormProps) {
   const {
     createPublicEvent,
-    isPending,
-    isSuccess,
-    error: contractError,
+    isPending: isPendingPublic,
+    isSuccess: isSuccessPublic,
+    error: contractErrorPublic,
   } = useEventContract();
+
+  const {
+    createPaidEvent,
+    isPending: isPendingPaid,
+    isSuccess: isSuccessPaid,
+    error: contractErrorPaid,
+  } = usePaidEventContract();
+
   const { isConnected } = useAccount();
+
+  // Combine states from both hooks
+  const isPending = isPendingPublic || isPendingPaid;
+  const isSuccess = isSuccessPublic || isSuccessPaid;
+  const contractError = contractErrorPublic || contractErrorPaid;
   const [formData, setFormData] = useState<CreateEventInput>({
     title: "",
     description: "",
@@ -87,11 +102,14 @@ export function CreateEventForm({
     }
 
     try {
-      // Prepara os dados para o contrato
-      const contractParams = prepareEventForContract(formData);
-
-      // Chama o contrato
-      await createPublicEvent(contractParams);
+      // Prepara os dados para o contrato e chama o contrato apropriado
+      if (formData.price && formData.price > 0) {
+        const contractParams = preparePaidEventForContract(formData);
+        await createPaidEvent(contractParams);
+      } else {
+        const contractParams = prepareEventForContract(formData);
+        await createPublicEvent(contractParams);
+      }
 
       // Reset form
       setFormData({
